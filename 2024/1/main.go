@@ -10,20 +10,19 @@ import (
 	"strings"
 )
 
-func compute(left []int, right []int) int {
-	sort.Slice(left[:], func(i, j int) bool {
-		return left[i] < left[j]
+func compute(lefts []int, rights []int) int {
+	sort.Slice(lefts, func(i, j int) bool {
+		return lefts[i] < lefts[j]
 	})
-	sort.Slice(right[:], func(i, j int) bool {
-		return right[i] < right[j]
+	sort.Slice(rights, func(i, j int) bool {
+		return rights[i] < rights[j]
 	})
 
 	var result int
-	for i := 0; i < len(left); i++ {
-		fmt.Printf("Left: %d, Right: %d\n", left[i], right[i])
 
-		if left[i] != right[i] {
-			result += int(math.Abs(float64(left[i] - right[i])))
+	for i := range lefts {
+		if lefts[i] != rights[i] {
+			result += int(math.Abs(float64(lefts[i] - rights[i])))
 		}
 	}
 
@@ -31,13 +30,15 @@ func compute(left []int, right []int) int {
 }
 
 func main() {
-	f, _ := os.Open("input.txt")
-	defer f.Close()
+	file, _ := os.Open("input.txt")
+	defer file.Close()
 
-	var lefts []int
-	var rights []int
+	var (
+		lefts  []int
+		rights []int
+	)
 
-	s := bufio.NewScanner(f)
+	s := bufio.NewScanner(file)
 	for lineno := 1; s.Scan(); lineno++ {
 		line := s.Text()
 		f := strings.Fields(line)
