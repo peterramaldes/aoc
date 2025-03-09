@@ -1,23 +1,24 @@
 #!/usr/bin/perl
+use v5.38;
 use warnings;
-use strict;
+use autodie;
 
-sub main {
-  my $result = parse_file();
+main();
+
+sub main { 
+  my $result = parse_file(); 
   count_how_many_rows_are_safe($result);
-}
+} 
 
-sub count_how_many_rows_are_safe {
-  my $row = $_[0];
-  my $row_len = @{$row};
+sub count_how_many_rows_are_safe ($rows) {
+  my $row_len = @{$rows};
 
   my $safe = 0;
   my $unsafe = 0;
-  for (my $i = 0; $i < $row_len; $i++) {
-    my $is_safe = is_row_safe($row->[$i]);
-    
+  for my $row (@ $rows) {
+    my $is_safe = is_row_safe($row);
 
-    debug($row->[$i], $is_safe);
+    debug($row, $is_safe);
     
     if ($is_safe) {
       $safe++;
@@ -29,24 +30,20 @@ sub count_how_many_rows_are_safe {
   print "Safe: $safe, Unsafe: $unsafe\n";
 }
 
-sub debug {
-  my $row     = $_[0];
-  my $is_safe = $_[1];
-  my @arr = join(", ", @$row);
-  
-  if ($is_safe)  { print "S: @arr \n"; } 
-  if (!$is_safe) { print "U: @arr \n"; }
+sub debug ($rows, $is_safe) {
+  my $row = join(", ", @$rows);
+  if ($is_safe)  { print "S: $row \n"; } 
+  if (!$is_safe) { print "U: $row \n"; }
 }
 
 # It is safe if the entire row is increasing or decreasing by the columns
-sub is_row_safe {
-  my $row = $_[0];
+sub is_row_safe ($row) {
   my $col_len = @{$row};
 
-  my $previous = $row->[0];
   my $is_increasing = 0;
   my $is_decreasing = 0;
   for (my $i = 1; $i < $col_len; $i++) {
+    my $previous = $row->[$i-1];
     my $current = $row->[$i];
     my $level = abs($current - $previous);
 
@@ -64,26 +61,17 @@ sub is_row_safe {
 }
 
 sub parse_file {
-  # Read all lines and store in @lines
-  my $input = './input.txt';
-  # my $input = './sample.txt';
-  open(my $fh, '<', $input) or die "Could not open a file '$input' $!";
-  my @lines = <$fh>;
-  close($fh);
-
-  # Loop lines and parse to a matrix
-  my $matrix; 
-  for my $row_index (0 .. $#lines) {
-    chomp $lines[$row_index]; # Remove the newline character
-    my @elements = split(' ', $lines[$row_index]);
-
-    for my $col_index (0 .. $#elements) {
-      # print "Row: $row_index, Column: $col_index, Value: $elements[$col_index]\n";
-      $matrix->[$row_index][$col_index] = $elements[$col_index];
-    }
+  # my $input = './input.txt';
+  my $input = './sample.txt';
+  open(my $fh, '<', $input);
+  
+  my $matrix = []; 
+  while (my $line = <$fh>) {
+    chomp $line;
+    my @row = split(/ /, $line);
+    push(@$matrix, \@row);
   }
 
+  close($fh);
   return $matrix;
 }
-
-main();
