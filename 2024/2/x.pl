@@ -3,12 +3,8 @@ use v5.38;
 use warnings;
 use autodie;
 
-main();
-
-sub main { 
-  my $result = parse_file(); 
-  count_how_many_rows_are_safe($result);
-} 
+my $result = parse_file(); 
+count_how_many_rows_are_safe($result);
 
 sub count_how_many_rows_are_safe ($rows) {
   my $row_len = @{$rows};
