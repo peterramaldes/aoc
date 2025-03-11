@@ -57,17 +57,12 @@ sub is_row_safe ($row) {
 }
 
 sub parse_file {
-  # my $input = './input.txt';
-  my $input = './sample.txt';
-  open(my $fh, '<', $input);
-  
-  my $matrix = []; 
-  while (my $line = <$fh>) {
-    chomp $line;
-    my @row = split(/ /, $line);
-    push(@$matrix, \@row);
+  my $data;
+
+  while (<>) {
+    chomp;
+    push @$data, [ split ];
   }
 
-  close($fh);
-  return $matrix;
+  return $data;
 }
